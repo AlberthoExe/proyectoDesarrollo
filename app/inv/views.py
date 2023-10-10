@@ -3,8 +3,10 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import generic
 from django.urls import reverse_lazy
+from django.contrib import messages
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 
 from .models import Categoria, SubCategoria, Marca, UnidadMedida, Producto
 from .forms import CategoriaForm, SubCategoriaForm, MarcaForm, UMForm, ProductoForm
@@ -16,26 +18,28 @@ class CategoriaView(LoginRequiredMixin, generic.ListView):
     login_url = 'bases_login'
 
 
-class CategoriaNew(LoginRequiredMixin, generic.CreateView):
+class CategoriaNew(SuccessMessageMixin ,LoginRequiredMixin, generic.CreateView):
     model=Categoria
     template_name="inv/categoria_form.html"
     context_object_name = "obj"
     form_class=CategoriaForm
     success_url=reverse_lazy("inv:categoria_list")
     login_url="bases:login"
+    success_message = "Categoria creada satisfactoriamente"
 
     def form_valid(self, form):
         form.instance.uc = self.request.user
         return super().form_valid(form)
 
 
-class CategoriaEdit(LoginRequiredMixin, generic.UpdateView):
+class CategoriaEdit(SuccessMessageMixin,LoginRequiredMixin, generic.UpdateView):
     model=Categoria
     template_name="inv/categoria_form.html"
     context_object_name = "obj"
     form_class=CategoriaForm
     success_url=reverse_lazy("inv:categoria_list")
     login_url="bases:login"
+    success_message="Categoria editada exitosamente"
 
     def form_valid(self, form):
         form.instance.um = self.request.user.id
@@ -56,25 +60,27 @@ class SubCategoriaView(LoginRequiredMixin, generic.ListView):
     login_url = 'bases_login'
 
 
-class SubCategoriaNew(LoginRequiredMixin, generic.CreateView):
+class SubCategoriaNew(SuccessMessageMixin,LoginRequiredMixin, generic.CreateView):
     model=SubCategoria
     template_name="inv/subcategoria_form.html"
     context_object_name = "obj"
     form_class=SubCategoriaForm
     success_url=reverse_lazy("inv:subcategoria_list")
     login_url="bases:login"
+    success_message= "Subcategoria creada exitosamente"
 
     def form_valid(self, form):
         form.instance.uc = self.request.user
         return super().form_valid(form)
 
-class SubCategoriaEdit(LoginRequiredMixin, generic.UpdateView):
+class SubCategoriaEdit(SuccessMessageMixin,LoginRequiredMixin, generic.UpdateView):
     model=SubCategoria
     template_name="inv/subcategoria_form.html"
     context_object_name = "obj"
     form_class=SubCategoriaForm
     success_url=reverse_lazy("inv:subcategoria_list")
     login_url="bases:login"
+    success_message="Subcategoria editada Correctamente!"
 
     def form_valid(self, form):
         form.instance.um = self.request.user.id
@@ -96,26 +102,28 @@ class MarcaView(LoginRequiredMixin, generic.ListView):
     login_url = 'bases_login'
 
 
-class MarcaNew(LoginRequiredMixin, generic.CreateView):
+class MarcaNew(SuccessMessageMixin,LoginRequiredMixin, generic.CreateView):
     model=Marca
     template_name="inv/marca_form.html"
     context_object_name = "obj"
     form_class=MarcaForm
     success_url=reverse_lazy("inv:marca_list")
     login_url="bases:login"
+    success_message="Marca agregada correctamente!"
 
     def form_valid(self, form):
         form.instance.uc = self.request.user
         return super().form_valid(form)
 
 
-class MarcaEdit(LoginRequiredMixin, generic.UpdateView):
+class MarcaEdit(SuccessMessageMixin,LoginRequiredMixin, generic.UpdateView):
     model=Marca
     template_name="inv/categoria_form.html"
     context_object_name = "obj"
     form_class=MarcaForm
     success_url=reverse_lazy("inv:marca_list")
     login_url="bases:login"
+    success_message="Marca editada correctamente!"
 
     def form_valid(self, form):
         form.instance.um = self.request.user.id
@@ -138,6 +146,7 @@ def marca_inactivar(request, id):
     if request.method == 'POST':
         marca.estado = False
         marca.save()
+        messages.error(request, "Marca Inactivada")
         return redirect("inv:marca_list")
     
     return render(request, template_name, contexto)
@@ -153,13 +162,14 @@ class UMView(LoginRequiredMixin, generic.ListView):
     login_url = 'bases_login'
 
 
-class UMNew(LoginRequiredMixin, generic.CreateView):
+class UMNew(SuccessMessageMixin,LoginRequiredMixin, generic.CreateView):
     model=UnidadMedida
     template_name="inv/um_form.html"
     context_object_name = "obj"
     form_class=UMForm
     success_url=reverse_lazy("inv:um_list")
     login_url="bases:login"
+    success_message="Unidad de medida creada!"
 
     def form_valid(self, form):
         form.instance.uc = self.request.user
@@ -167,13 +177,14 @@ class UMNew(LoginRequiredMixin, generic.CreateView):
         return super().form_valid(form)
 
 
-class UMEdit(LoginRequiredMixin, generic.UpdateView):
+class UMEdit(SuccessMessageMixin,LoginRequiredMixin, generic.UpdateView):
     model=UnidadMedida
     template_name="inv/um_form.html"
     context_object_name = "obj"
     form_class=UMForm
     success_url=reverse_lazy("inv:um_list")
     login_url="bases:login"
+    success_message="Unidad de medida editada!"
 
     def form_valid(self, form):
         form.instance.um = self.request.user.id
@@ -212,26 +223,28 @@ class ProductoView(LoginRequiredMixin, generic.ListView):
     login_url = 'bases_login'
 
 
-class ProductoNew(LoginRequiredMixin, generic.CreateView):
+class ProductoNew(SuccessMessageMixin,LoginRequiredMixin, generic.CreateView):
     model=Producto
     template_name="inv/producto_form.html"
     context_object_name = "obj"
     form_class=ProductoForm
     success_url=reverse_lazy("inv:producto_list")
     login_url="bases:login"
+    success_message="Producto Creado!"
 
     def form_valid(self, form):
         form.instance.uc = self.request.user
         return super().form_valid(form)
 
 
-class ProductoEdit(LoginRequiredMixin, generic.UpdateView):
+class ProductoEdit(SuccessMessageMixin,LoginRequiredMixin, generic.UpdateView):
     model=Producto
     template_name="inv/producto_form.html"
     context_object_name = "obj"
     form_class=ProductoForm
     success_url=reverse_lazy("inv:producto_list")
     login_url="bases:login"
+    success_message="Producto editado!"
 
     def form_valid(self, form):
         form.instance.um = self.request.user.id
