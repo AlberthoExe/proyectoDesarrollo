@@ -2,29 +2,35 @@ from django.shortcuts import render
 from django.views import generic
 from django.urls import reverse_lazy
 
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse
 import json
 
 from .models import Proveedor
 from cmp.forms import ProveedorForm
 
+from bases.views import SinPrivilegios
 
 
-class ProveedorView(LoginRequiredMixin, generic.ListView):
+
+class ProveedorView(SinPrivilegios, generic.ListView):
     model = Proveedor
     template_name="cmp/proveedor_list.html"
     context_object_name = "obj"
-    login_url = 'bases_login'
+    permission_required="cmp.view_proveedor"
 
 
-class ProveedorNew(LoginRequiredMixin, generic.CreateView):
+class ProveedorNew(SuccessMessageMixin,SinPrivilegios, generic.CreateView):
     model=Proveedor
     template_name="cmp/proveedor_form.html"
     context_object_name = "obj"
     form_class=ProveedorForm
     success_url=reverse_lazy("cmp:proveedor_list")
-    login_url="bases:login"
+    success_message="Proveedor agregado!"
+    permission_required="cmp.add_proveedor"
+
 
     def form_valid(self, form):
         form.instance.uc = self.request.user
@@ -32,20 +38,22 @@ class ProveedorNew(LoginRequiredMixin, generic.CreateView):
         return super().form_valid(form)
 
 
-class ProveedorEdit(LoginRequiredMixin, generic.UpdateView):
+class ProveedorEdit(SuccessMessageMixin,SinPrivilegios, generic.UpdateView):
     model=Proveedor
     template_name="cmp/proveedor_form.html"
     context_object_name = "obj"
     form_class=ProveedorForm
     success_url=reverse_lazy("cmp:proveedor_list")
-    login_url="bases:login"
+    success_message="Proveedor editado!"
+    permission_required="cmp.change_proveedor"
 
     def form_valid(self, form):
         form.instance.um = self.request.user.id
         return super().form_valid(form)
     
 
-
+@login_required(login_url='/login/')
+@permission_required('cmp.change_proveedor', login_url='bases:sin_privilegios')
 def proveedorInactivar(request,id):
     template_name='cmp/inactivar_prv.html'
     contexto={}
