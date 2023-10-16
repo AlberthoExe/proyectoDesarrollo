@@ -14,7 +14,7 @@
             <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                 aria-labelledby="dropdownMenuLink">
                 <div class="dropdown-header">Acciones:</div>
-                <a class="dropdown-item" href="#"><i class="far fa-calendar-plus"></i> Nueva</a>
+                <a class="dropdown-item" href="{% url 'cmp:compras_new' %}"><i class="far fa-calendar-plus"></i> Nueva</a>
             </div>
         </div>
     </div>
@@ -49,7 +49,7 @@
                     <td>{{ item.total }}</td>
                     <td>{{ item.estado|yesno:"Activo,Inactivo" }}</td>
                     <td>
-                        <a href="#" class="btn btn-warning btn.circle"><i class="far fa-edit"></i></a>
+                        <a href="{ url 'cmp:compras_edit' item.id }" class="btn btn-warning btn.circle"><i class="far fa-edit"></i></a>
                     </td>
                 </tr>
                 {% endfor %}
