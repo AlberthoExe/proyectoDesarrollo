@@ -15,6 +15,7 @@
                 aria-labelledby="dropdownMenuLink">
                 <div class="dropdown-header">Acciones:</div>
                 <a class="dropdown-item" href="{% url 'cmp:compras_new' %}"><i class="far fa-calendar-plus"></i> Nueva</a>
+                <a class="dropdown-item" href="{% url 'cmp:compras_print_all' %}" target="reportes"><i class="fas fa-print"></i> Listado</a>
             </div>
         </div>
     </div>
@@ -49,7 +50,9 @@
                     <td>{{ item.total }}</td>
                     <td>{{ item.estado|yesno:"Activo,Inactivo" }}</td>
                     <td>
-                        <a href="{ url 'cmp:compras_edit' item.id }" class="btn btn-warning btn.circle"><i class="far fa-edit"></i></a>
+                        <a href="{% url 'cmp:compras_edit' item.id %}" class="btn btn-warning btn.circle"><i class="far fa-edit"></i></a>
+                        <a href="{% url 'cmp:compras_print_one' item.id %}" class="btn btn-success btn.circle" target="reportes"><i class="fas fa-print"></i></a>
+
                     </td>
                 </tr>
                 {% endfor %}
